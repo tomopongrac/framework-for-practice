@@ -9,3 +9,5 @@ try {
     $dotenv->load();
 } catch (\Dotenv\Exception\InvalidPathException $e) {
 }
+
+require_once base_path('bootstrap/container.php');

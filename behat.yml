@@ -1,0 +1,7 @@
+default:
+    extensions:
+        Behat\MinkExtension\ServiceContainer\MinkExtension:
+            base_url:  'http://localhost:8888'
+            sessions:
+                default:
+                    goutte: ~

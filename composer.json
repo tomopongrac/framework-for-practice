@@ -10,5 +10,10 @@
     "require": {
         "vlucas/phpdotenv": "^3.3",
         "league/container": "^3.2"
+    },
+    "require-dev": {
+        "behat/behat": "^3.5",
+        "behat/mink-extension": "^2.3",
+        "behat/mink-goutte-driver": "^1.2"
     }
 }

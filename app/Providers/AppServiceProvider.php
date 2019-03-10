@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use League\Container\ServiceProvider\AbstractServiceProvider;
 use League\Route\Router;
+use League\Route\Strategy\ApplicationStrategy;
 use Zend\Diactoros\ServerRequestFactory;
 use Zend\HttpHandlerRunner\Emitter\SapiEmitter;
 
@@ -26,8 +27,9 @@ class AppServiceProvider extends AbstractServiceProvider
     {
         $container = $this->getContainer();
 
-        $container->share(Router::class, function () {
-            return new Router();
+        $container->share(Router::class, function () use ($container) {
+            $strategy = (new ApplicationStrategy)->setContainer($container);
+            return (new Router())->setStrategy($strategy);
         });
 
         $container->share('request', function () {

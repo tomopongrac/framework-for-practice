@@ -2,15 +2,18 @@
 
 namespace App\Controllers;
 
-use Zend\Diactoros\Response;
+use App\Views\View;
 
 class HomeController
 {
+    protected $view;
+
+    public function __construct(View $view)
+    {
+        $this->view = $view;
+    }
     public function index()
     {
-        $response = new Response();
-        $response->getBody()->write('<h1>Framework for practice</h1>');
-
-        return $response;
+        return $this->view->render('home.twig');
     }
 }

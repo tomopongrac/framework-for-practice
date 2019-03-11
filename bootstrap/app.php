@@ -10,6 +10,10 @@ try {
 } catch (\Dotenv\Exception\InvalidPathException $e) {
 }
 
+$loader = new \App\Config\Loaders\ArrayLoader([
+    'app' => base_path('config/app.php'),
+]);
+
 require_once base_path('bootstrap/container.php');
 
 $route = $container->get(\League\Route\Router::class);

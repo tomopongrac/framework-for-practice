@@ -26,6 +26,7 @@ class ConfigServiceProvider extends AbstractServiceProvider
             $loader = new \App\Config\Loaders\ArrayLoader([
                 'app' => base_path('config/app.php'),
                 'cache' => base_path('config/cache.php'),
+                'providers' => base_path('config/providers.php'),
             ]);
 
             $config = (new Config())->load([$loader]);

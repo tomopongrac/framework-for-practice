@@ -5,7 +5,7 @@ namespace App\Models;
 /**
  * @Entity @Table(name="users")
  */
-class User
+class User extends Model
 {
     /**
      * @GeneratedValue(strategy="AUTO")

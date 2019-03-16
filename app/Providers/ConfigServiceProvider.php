@@ -27,6 +27,7 @@ class ConfigServiceProvider extends AbstractServiceProvider
                 'app' => base_path('config/app.php'),
                 'cache' => base_path('config/cache.php'),
                 'providers' => base_path('config/providers.php'),
+                'db' => base_path('config/db.php'),
             ]);
 
             $config = (new Config())->load([$loader]);

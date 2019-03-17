@@ -5,7 +5,13 @@ session_start();
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    $dotenv = \Dotenv\Dotenv::create(base_path());
+    if (isset($environmentEnv)) {
+        $dotenvFile = '.env.'.$environmentEnv;
+    } else {
+        $dotenvFile = '.env';
+    }
+
+    $dotenv = \Dotenv\Dotenv::create(base_path(), $dotenvFile);
     $dotenv->load();
 } catch (\Dotenv\Exception\InvalidPathException $e) {
 }

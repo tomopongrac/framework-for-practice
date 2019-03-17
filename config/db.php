@@ -8,5 +8,11 @@ return [
         'user' => env('DB_USER', 'root'),
         'password' => env('DB_PASSWORD', 'root'),
         'port' => env('DB_PORT', 3306),
-    ]
+    ],
+    'sqlite' => [
+        'driver' => env('DB_DRIVER', 'pdo_sqlite'),
+        'user' => env('DB_USER', 'root'),
+        'password' => env('DB_PASSWORD', 'root'),
+        'path' => base_path('database/'.env('DB_DATABASE')),
+    ],
 ];

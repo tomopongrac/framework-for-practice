@@ -17,4 +17,8 @@ class LoginController
     {
         return $this->view->render('auth/login.twig');
     }
+
+    public function store(ServerRequestInterface $request)
+    {
+    }
 }

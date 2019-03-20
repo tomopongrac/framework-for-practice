@@ -22,6 +22,10 @@ $route = $container->get(\League\Route\Router::class);
 
 require_once base_path('routes/web.php');
 
-$response = $route->dispatch(
-    $container->get('request')
-);
+try {
+    $response = $route->dispatch(
+        $container->get('request')
+    );
+} catch (Exception $e) {
+    dump($e);
+}

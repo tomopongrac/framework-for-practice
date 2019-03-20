@@ -2,9 +2,11 @@
 
 namespace App\Controllers\Auth;
 
+use App\Controllers\Controller;
 use App\Views\View;
+use Psr\Http\Message\ServerRequestInterface;
 
-class LoginController
+class LoginController extends Controller
 {
     protected $view;
 
@@ -20,5 +22,9 @@ class LoginController
 
     public function store(ServerRequestInterface $request)
     {
+        $this->validate($request, [
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
     }
 }

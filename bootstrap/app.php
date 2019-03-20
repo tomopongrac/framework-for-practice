@@ -27,5 +27,6 @@ try {
         $container->get('request')
     );
 } catch (Exception $e) {
-    dump($e);
+    $handler = new \App\Exceptions\Handler($e);
+    $response = $handler->respond();
 }

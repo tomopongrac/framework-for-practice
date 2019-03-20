@@ -1,5 +1,12 @@
 <?php
 
+if (!function_exists('redirect')) {
+    function redirect($path)
+    {
+        return new \Zend\Diactoros\Response\RedirectResponse($path);
+    }
+}
+
 if (!function_exists('base_path')) {
     function base_path($path = '')
     {

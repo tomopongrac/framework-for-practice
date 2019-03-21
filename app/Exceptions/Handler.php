@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use App\Session\SessionStoreInterface;
 use Exception;
 use ReflectionClass;
 use App\Exceptions\ValiadationException;
@@ -10,9 +11,12 @@ class Handler
 {
     protected $exception;
 
-    public function __construct(Exception $exception)
+    protected $session;
+
+    public function __construct(Exception $exception, SessionStoreInterface $session)
     {
         $this->exception = $exception;
+        $this->session = $session;
     }
 
     public function respond()
@@ -28,6 +32,9 @@ class Handler
 
     protected function handleValidationException(ValidationException $e)
     {
+        $this->session->set('errors', $e->getErrors());
+        $this->session->set('old', $e->getOldInput());
+
         return redirect($e->getPath());
     }
 

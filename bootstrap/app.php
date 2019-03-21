@@ -20,6 +20,8 @@ require_once base_path('bootstrap/container.php');
 
 $route = $container->get(\League\Route\Router::class);
 
+require_once base_path('bootstrap/middleware.php');
+
 require_once base_path('routes/web.php');
 
 try {
@@ -27,6 +29,9 @@ try {
         $container->get('request')
     );
 } catch (Exception $e) {
-    $handler = new \App\Exceptions\Handler($e);
+    $handler = new \App\Exceptions\Handler(
+        $e,
+        $container->get(\App\Session\SessionStoreInterface::class)
+    );
     $response = $handler->respond();
 }

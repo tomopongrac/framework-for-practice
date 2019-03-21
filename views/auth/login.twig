@@ -7,14 +7,24 @@
                 <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
                 <div class="form-group">
                     <label for="email">Email address</label>
-                    <input type="email" id="email" name="email" class="form-control" placeholder="Email address"
+                    <input type="email" id="email" name="email" class="form-control{{ errors.email ? ' is-invalid' : '   ' }}" placeholder="Email address"
                            required
                            autofocus>
+                    {% if errors.email %}
+                        <div class="invalid-feedback">
+                            {{ errors.email | first }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                    <input type="password" id="password" name="password" class="form-control{{ errors.password ? ' is-invalid' : '   ' }}" placeholder="Password"
                            required>
+                    {% if errors.password %}
+                        <div class="invalid-feedback">
+                            {{ errors.password | first }}
+                        </div>
+                    {% endif %}
                 </div>
                 <div class="checkbox mb-3">
                     <label>

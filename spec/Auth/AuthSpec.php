@@ -61,4 +61,37 @@ class AuthSpec extends ObjectBehavior
 
         $this->attempt('john@example.com', 'password')->shouldReturn(false);
     }
+
+    function it_can_check_if_user_id_is_in_session(SessionStoreInterface $session)
+    {
+        $session->exists('id')->willReturn(true);
+
+        $this->hasUserInSession()->shouldReturn(true);
+    }
+
+    function it_can_get_user_from_session_id(
+        EntityManager $entityManager,
+        EntityRepository $entityRepository,
+        User $user,
+        SessionStoreInterface $session
+    ) {
+        $session->get('id')->willReturn($userId = 1);
+        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
+        $entityRepository->find($userId)->shouldBeCalled()->willReturn($user);
+
+        $this->setUserFromSession();
+        $this->user()->shouldReturn($user);
+    }
+
+    function it_will_throw_exception_if_user_dont_exists(
+        EntityManager $entityManager,
+        EntityRepository $entityRepository,
+        SessionStoreInterface $session
+    ) {
+        $session->get('id')->willReturn($userId = 1);
+        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
+        $entityRepository->find($userId)->shouldBeCalled()->willReturn(null);
+
+        $this->shouldThrow(new \Exception())->during('setUserFromSession');
+    }
 }

@@ -69,6 +69,13 @@ class AuthSpec extends ObjectBehavior
         $this->hasUserInSession()->shouldReturn(true);
     }
 
+    function it_can_check_if_is_signin(SessionStoreInterface $session)
+    {
+        $session->exists('id')->willReturn(true);
+
+        $this->check()->shouldReturn(true);
+    }
+
     function it_can_get_user_from_session_id(
         EntityManager $entityManager,
         EntityRepository $entityRepository,

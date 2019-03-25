@@ -42,6 +42,11 @@ class Auth
         return $this->user;
     }
 
+    public function check()
+    {
+        return $this->hasUserInSession();
+    }
+
     public function hasUserInSession()
     {
         return $this->session->exists('id');

@@ -50,4 +50,22 @@ class FeatureContext extends MinkContext implements Context
         $em = self::$container->get(\Doctrine\ORM\EntityManager::class);
         $em->createQuery('DELETE FROM App\Models\User')->execute();
     }
+
+    /**
+     * @Given there is an user :arg1 with email :arg2 and password :arg3
+     */
+    public function thereIsAnUserWithEmailAndPassword($username, $email, $password)
+    {
+        $em = self::$container->get(\Doctrine\ORM\EntityManager::class);
+
+        $user = new \App\Models\User();
+        $user->update([
+            'name' => $username,
+            'email' => $email,
+            'password' => password_hash($password, PASSWORD_BCRYPT, ['costs' => 12])
+        ]);
+
+        $em->persist($user);
+        $em->flush();
+    }
 }

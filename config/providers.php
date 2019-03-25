@@ -5,7 +5,7 @@ return [
     'App\Providers\ViewServiceProvider',
     'App\Providers\DatabaseServiceProvider',
     'App\Providers\SessionServiceProvider',
-    'App\Providers\ViewShareServiceProvider',
     'App\Providers\HashServiceProvider',
     'App\Providers\AuthServiceProvider',
+    'App\Providers\ViewShareServiceProvider',
 ];

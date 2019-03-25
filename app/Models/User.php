@@ -28,12 +28,12 @@ class User extends Model
      */
     protected $password;
     /**
-     * @remember_token @Column(type="string")
+     * @remember_token @Column(type="string", nullable=true)
      */
     protected $remember_token;
 
     /**
-     * @remember_identifier @Column(type="string")
+     * @remember_identifier @Column(type="string", nullable=true)
      */
     protected $remember_identifier;
 }

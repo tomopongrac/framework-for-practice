@@ -33,3 +33,17 @@ if (!function_exists('env')) {
         }
     }
 }
+
+if (!function_exists('detectDotEnvFile')) {
+    function detectDotEnvFile($environmentEnv = null): string
+    {
+        if (isset($environmentEnv)) {
+            return '.env.'.$environmentEnv;
+        }
+        if (isset($_SERVER['HTTP_USER_AGENT']) && $_SERVER['HTTP_USER_AGENT'] === 'Symfony BrowserKit') {
+            return '.env.behat';
+        }
+
+        return '.env';
+    }
+}

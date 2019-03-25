@@ -5,11 +5,7 @@ session_start();
 require_once __DIR__.'/../vendor/autoload.php';
 
 try {
-    if (isset($environmentEnv)) {
-        $dotenvFile = '.env.'.$environmentEnv;
-    } else {
-        $dotenvFile = '.env';
-    }
+    $dotenvFile = detectDotEnvFile($environmentEnv ?? null);
 
     $dotenv = \Dotenv\Dotenv::create(base_path(), $dotenvFile);
     $dotenv->load();

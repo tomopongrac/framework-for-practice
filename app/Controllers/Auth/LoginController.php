@@ -4,6 +4,7 @@ namespace App\Controllers\Auth;
 
 use App\Auth\Auth;
 use App\Controllers\Controller;
+use App\Session\Flash;
 use App\Views\View;
 use Psr\Http\Message\ServerRequestInterface;
 
@@ -13,10 +14,13 @@ class LoginController extends Controller
 
     protected $auth;
 
-    public function __construct(View $view, Auth $auth)
+    protected $flash;
+
+    public function __construct(View $view, Auth $auth, Flash $flash)
     {
         $this->view = $view;
         $this->auth = $auth;
+        $this->flash = $flash;
     }
 
     public function index()
@@ -34,8 +38,9 @@ class LoginController extends Controller
         $attempt = $this->auth->attempt($data['email'], $data['password']);
 
         if (!$attempt) {
-            dump('failed');
-            die();
+            $this->flash->now('error', 'Could not sign you in with those details.');
+
+            return redirect($request->getUri()->getPath());
         }
 
         return redirect('/');

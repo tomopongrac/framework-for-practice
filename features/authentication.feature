@@ -10,3 +10,10 @@ Feature: Authentication
     And I fill in "password" with "john"
     And I press "Sign in"
     Then I should see "johnDoe"
+
+  Scenario: Sign in attempt with invalid credentials
+    Given I am on "/auth/signin"
+    And I fill in "email" with "invalid@example.com"
+    And I fill in "password" with "wrong-password"
+    And I press "Sign in"
+    Then I should see "Could not sign"

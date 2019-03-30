@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Auth\Auth;
+use App\Security\Csrf;
 use App\Session\Flash;
 use App\Views\View;
 use League\Container\ServiceProvider\AbstractServiceProvider;
@@ -22,6 +23,7 @@ class ViewShareServiceProvider extends AbstractServiceProvider implements Bootab
             'config' => $container->get('config'),
             'auth' => $container->get(Auth::class),
             'flash' => $container->get(Flash::class),
+            'csrf' => $container->get(Csrf::class),
         ]);
     }
 

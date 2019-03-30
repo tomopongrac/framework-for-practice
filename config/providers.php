@@ -8,5 +8,6 @@ return [
     'App\Providers\HashServiceProvider',
     'App\Providers\AuthServiceProvider',
     'App\Providers\FlashServiceProvider',
+    'App\Providers\CsrfServiceProvider',
     'App\Providers\ViewShareServiceProvider',
 ];

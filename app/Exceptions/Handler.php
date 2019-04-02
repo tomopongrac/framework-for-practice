@@ -3,6 +3,7 @@
 namespace App\Exceptions;
 
 use App\Session\SessionStoreInterface;
+use App\Views\View;
 use Exception;
 use ReflectionClass;
 use App\Exceptions\ValiadationException;
@@ -13,10 +14,13 @@ class Handler
 
     protected $session;
 
-    public function __construct(Exception $exception, SessionStoreInterface $session)
+    protected $view;
+
+    public function __construct(Exception $exception, SessionStoreInterface $session, View $view)
     {
         $this->exception = $exception;
         $this->session = $session;
+        $this->view = $view;
     }
 
     public function respond()
@@ -28,6 +32,11 @@ class Handler
         }
 
         return $this->unhandledException($this->exception);
+    }
+
+    protected function handleCsrfTokenException(Exception $e)
+    {
+        return $this->view->render('errors/csrf.twig');
     }
 
     protected function handleValidationException(ValidationException $e)

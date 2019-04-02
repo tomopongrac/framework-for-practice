@@ -27,7 +27,8 @@ try {
 } catch (Exception $e) {
     $handler = new \App\Exceptions\Handler(
         $e,
-        $container->get(\App\Session\SessionStoreInterface::class)
+        $container->get(\App\Session\SessionStoreInterface::class),
+        $container->get(\App\Views\View::class)
     );
     $response = $handler->respond();
 }

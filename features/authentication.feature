@@ -17,3 +17,12 @@ Feature: Authentication
     And I fill in "password" with "wrong-password"
     And I press "Sign in"
     Then I should see "Could not sign"
+
+  Scenario: Register user
+    Given I am on "/auth/register"
+    And I fill in "email" with "johnDoe@example.com"
+    And I fill in "name" with "johnDoe"
+    And I fill in "password" with "john"
+    And I fill in "password_confirmation" with "john"
+    And I press "Create account"
+    Then I should see "johnDoe"

@@ -4,6 +4,8 @@ namespace spec\App\Auth;
 
 use App\Auth\Auth;
 use App\Auth\Hashing\HasherInterface;
+use App\Auth\Recaller;
+use App\Cookie\CookieJar;
 use App\Models\User;
 use App\Session\Session;
 use App\Session\SessionStoreInterface;
@@ -14,9 +16,9 @@ use Prophecy\Argument;
 
 class AuthSpec extends ObjectBehavior
 {
-    function let(EntityManager $entityManager, HasherInterface $hasher, SessionStoreInterface $session)
+    function let(EntityManager $entityManager, HasherInterface $hasher, SessionStoreInterface $session, Recaller $recaller, CookieJar $cookie)
     {
-        $this->beConstructedWith($entityManager, $hasher, $session);
+        $this->beConstructedWith($entityManager, $hasher, $session, $recaller, $cookie);
     }
 
     function it_is_initializable()

@@ -149,6 +149,53 @@ class Auth
     }
 
     /**
+     * Setting user property from session id
+     *
+     * @throws Exception
+     */
+    public function setUserFromCookie(): void
+    {
+        list($identifier, $token) = $this->recaller->splitCookieValue(
+            $this->cookie->get('remember')
+        );
+
+        $user = $this->entityManager->getRepository(User::class)->findOneBy([
+            'remember_identifier' => $identifier,
+        ]);
+
+        if (!$user) {
+            $this->cookie->clear('remember');
+
+            throw new Exception();
+        }
+
+        if (!$this->recaller->validateToken($token, $user->remember_token)) {
+            $this->getById($user->id)->update([
+                'remember_identifier' => null,
+                'remember_token' => null,
+            ]);
+            $this->entityManager->flush();
+            $this->cookie->clear('remember'); 
+
+            throw new Exception();
+        }
+
+        $this->setUserSession($user);
+
+        $this->user = $user;
+    }
+
+    /**
+     * Check if user has "remember me" cookie
+     *
+     * @return bool
+     */
+    public function hasRecaller(): bool
+    {
+        return $this->cookie->exists('remember');
+    }
+
+    /**
      * Check if password is correct
      *
      * @param  User  $user

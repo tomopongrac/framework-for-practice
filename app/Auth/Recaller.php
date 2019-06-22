@@ -25,6 +25,16 @@ class Recaller
     }
 
     /**
+     * Get indentifier and token from cookie value
+     *
+     * @param  string  $value
+     * @return array
+     */
+    public function splitCookieValue(string $value): array
+    {
+        return explode($this->separator, $value);
+    }
+    /**
      * Generate value which will be stored in cookie for "remember me" feature
      *
      * @param  string  $identifier
@@ -45,6 +55,19 @@ class Recaller
     public function getTokenHasForDatabase(string $token): string
     {
         return hash('sha256', $token);
+    }
+
+    /**
+     * Check if plain token is equal with hashed token
+     *
+     * @param  string  $plain
+     * @param  string  $hash
+     * @return bool
+     * @throws \Exception
+     */
+    public function validateToken(string $plain, string $hash): bool
+    {
+        return $this->getTokenHasForDatabase($plain) === $hash;
     }
 
     /**

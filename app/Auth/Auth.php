@@ -5,20 +5,14 @@ declare(strict_types=1);
 namespace App\Auth;
 
 use App\Auth\Hashing\HasherInterface;
+use App\Auth\Providers\UserProvider;
 use App\Cookie\CookieJar;
 use App\Models\User;
 use App\Session\SessionStoreInterface;
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\EntityRepository;
 use Exception;
 
 class Auth
 {
-    /**
-     * @var EntityManager
-     */
-    protected $entityManager;
-
     /**
      * @var HasherInterface
      */
@@ -45,26 +39,30 @@ class Auth
     protected $cookie;
 
     /**
+     * @var UserProvider
+     */
+    protected $userProvider;
+
+    /**
      * Auth constructor.
      *
-     * @param  EntityManager  $entityManager
      * @param  HasherInterface  $hasher
      * @param  SessionStoreInterface  $session
      * @param  Recaller  $recaller
      * @param  CookieJar  $cookie
      */
     public function __construct(
-        EntityManager $entityManager,
         HasherInterface $hasher,
         SessionStoreInterface $session,
         Recaller $recaller,
-        CookieJar $cookie
+        CookieJar $cookie,
+        UserProvider $userProvider
     ) {
-        $this->entityManager = $entityManager;
         $this->hasher = $hasher;
         $this->session = $session;
         $this->recaller = $recaller;
         $this->cookie = $cookie;
+        $this->userProvider = $userProvider;
     }
 
     /**
@@ -82,12 +80,11 @@ class Auth
      * @param  string  $password
      * @param  bool  $remember
      * @return bool
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws Exception
      */
     public function attempt(string $username, string $password, bool $remember = false): bool
     {
-        $user = $this->getByUsername($username);
+        $user = $this->userProvider->getByUsername($username);
 
         if (!$user || !$this->hasValidCredentials($user, $password)) {
             return false;
@@ -139,7 +136,7 @@ class Auth
      */
     public function setUserFromSession(): void
     {
-        $user = $this->getById($this->session->get('id'));
+        $user = $this->userProvider->getById($this->session->get('id'));
 
         if (!$user) {
             throw new Exception();
@@ -159,9 +156,7 @@ class Auth
             $this->cookie->get('remember')
         );
 
-        $user = $this->entityManager->getRepository(User::class)->findOneBy([
-            'remember_identifier' => $identifier,
-        ]);
+        $user = $this->userProvider->getByRememberIdentifier($identifier);
 
         if (!$user) {
             $this->cookie->clear('remember');
@@ -170,12 +165,8 @@ class Auth
         }
 
         if (!$this->recaller->validateToken($token, $user->remember_token)) {
-            $this->getById($user->id)->update([
-                'remember_identifier' => null,
-                'remember_token' => null,
-            ]);
-            $this->entityManager->flush();
-            $this->cookie->clear('remember'); 
+            $this->userProvider->clearUserRememberToken($user->id);
+            $this->cookie->clear('remember');
 
             throw new Exception();
         }
@@ -208,30 +199,6 @@ class Auth
     }
 
     /**
-     * Get user by id
-     *
-     * @param  int  $id
-     * @return User|null
-     */
-    protected function getById(int $id): ?User
-    {
-        return $this->entityManager->getRepository(User::class)->find($id);
-    }
-
-    /**
-     * Get user by username
-     *
-     * @param  string  $username
-     * @return User|null
-     */
-    protected function getByUsername(string $username): ?User
-    {
-        return $this->entityManager->getRepository(User::class)->findOneBy([
-            'email' => $username,
-        ]);
-    }
-
-    /**
      * Setting a session with user id
      *
      * @param  User  $user
@@ -246,8 +213,7 @@ class Auth
      * and updating user row in database with identifier and hashed token
      *
      * @param  User  $user
-     * @throws \Doctrine\ORM\ORMException
-     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws Exception
      */
     protected function setRememberToken(User $user): void
     {
@@ -255,11 +221,8 @@ class Auth
 
         $this->cookie->set('remember', $this->recaller->generateValueForCookie($identifier, $token));
 
-        $this->getById($user->id)->update([
-            'remember_identifier' => $identifier,
-            'remember_token' => $this->recaller->getTokenHasForDatabase($token),
-        ]);
-        $this->entityManager->flush();
+        $this->userProvider->setUserRememberToken($user->id, $identifier,
+            $this->recaller->getTokenHasForDatabase($token));
     }
 
 }

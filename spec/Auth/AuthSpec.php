@@ -4,6 +4,7 @@ namespace spec\App\Auth;
 
 use App\Auth\Auth;
 use App\Auth\Hashing\HasherInterface;
+use App\Auth\Providers\UserProvider;
 use App\Auth\Recaller;
 use App\Cookie\CookieJar;
 use App\Models\User;
@@ -16,9 +17,9 @@ use Prophecy\Argument;
 
 class AuthSpec extends ObjectBehavior
 {
-    function let(EntityManager $entityManager, HasherInterface $hasher, SessionStoreInterface $session, Recaller $recaller, CookieJar $cookie)
+    function let(HasherInterface $hasher, SessionStoreInterface $session, Recaller $recaller, CookieJar $cookie, UserProvider $userProvider)
     {
-        $this->beConstructedWith($entityManager, $hasher, $session, $recaller, $cookie);
+        $this->beConstructedWith($hasher, $session, $recaller, $cookie, $userProvider);
     }
 
     function it_is_initializable()
@@ -27,24 +28,20 @@ class AuthSpec extends ObjectBehavior
     }
 
     function it_should_return_false_if_email_dont_exist_in_database(
-        EntityManager $entityManager,
-        EntityRepository $entityRepository
+        UserProvider $userProvider
     ) {
-        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
-        $entityRepository->findOneBy(['email' => 'don-exists@example.com'])->shouldBeCalled()->willReturn(null);
+        $userProvider->getByUsername('don-exists@example.com')->shouldBeCalled()->willReturn(null);
 
         $this->attempt('don-exists@example.com', 'password')->shouldReturn(false);
     }
 
     function it_should_return_true_if_credentials_is_corrects(
-        EntityManager $entityManager,
-        EntityRepository $entityRepository,
+        UserProvider $userProvider,
         HasherInterface $hasher,
         User $user,
         SessionStoreInterface $session
     ) {
-        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
-        $entityRepository->findOneBy(['email' => 'john@example.com'])->shouldBeCalled()->willReturn($user);
+        $userProvider->getByUsername('john@example.com')->shouldBeCalled()->willReturn($user);
         $hasher->check('password', $user->password)->shouldBeCalled()->willReturn(true);
 
         $session->set('id', $user->id)->shouldBeCalled()->willReturn(null);
@@ -52,13 +49,11 @@ class AuthSpec extends ObjectBehavior
     }
 
     function it_should_return_false_if_password_is_incorrect(
-        EntityManager $entityManager,
-        EntityRepository $entityRepository,
+        UserProvider $userProvider,
         HasherInterface $hasher,
         User $user
     ) {
-        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
-        $entityRepository->findOneBy(['email' => 'john@example.com'])->shouldBeCalled()->willReturn($user);
+        $userProvider->getByUsername('john@example.com')->shouldBeCalled()->willReturn($user);
         $hasher->check('password', $user->password)->shouldBeCalled()->willReturn(false);
 
         $this->attempt('john@example.com', 'password')->shouldReturn(false);
@@ -79,27 +74,23 @@ class AuthSpec extends ObjectBehavior
     }
 
     function it_can_get_user_from_session_id(
-        EntityManager $entityManager,
-        EntityRepository $entityRepository,
+        UserProvider $userProvider,
         User $user,
         SessionStoreInterface $session
     ) {
         $session->get('id')->willReturn($userId = 1);
-        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
-        $entityRepository->find($userId)->shouldBeCalled()->willReturn($user);
+        $userProvider->getById($userId)->shouldBeCalled()->willReturn($user);
 
         $this->setUserFromSession();
         $this->user()->shouldReturn($user);
     }
 
     function it_will_throw_exception_if_user_dont_exists(
-        EntityManager $entityManager,
-        EntityRepository $entityRepository,
+        UserProvider $userProvider,
         SessionStoreInterface $session
     ) {
         $session->get('id')->willReturn($userId = 1);
-        $entityManager->getRepository(User::class)->shouldBeCalled()->willReturn($entityRepository);
-        $entityRepository->find($userId)->shouldBeCalled()->willReturn(null);
+        $userProvider->getById($userId)->shouldBeCalled()->willReturn(null);
 
         $this->shouldThrow(new \Exception())->during('setUserFromSession');
     }

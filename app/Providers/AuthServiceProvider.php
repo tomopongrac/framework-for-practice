@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Auth\Auth;
 use App\Auth\Hashing\HasherInterface;
+use App\Auth\Providers\DatabaseProvider;
 use App\Auth\Recaller;
 use App\Cookie\CookieJar;
 use App\Session\SessionStoreInterface;
@@ -28,12 +29,16 @@ class AuthServiceProvider extends AbstractServiceProvider
         $container = $this->getContainer();
 
         $container->share(Auth::class, function () use ($container) {
+            $provider = new DatabaseProvider(
+                $container->get(EntityManager::class)
+            );
+
             return new Auth(
-                $container->get(EntityManager::class),
                 $container->get(HasherInterface::class),
                 $container->get(SessionStoreInterface::class),
                 new Recaller(),
-                $container->get(CookieJar::class)
+                $container->get(CookieJar::class),
+                $provider
             );
         });
     }

@@ -31,7 +31,7 @@ class AuthenticateMiddleware implements MiddlewareInterface
             try {
                 $this->auth->setUserFromSession();
             } catch (Exception $e) {
-//                $this->auth->logout();
+                $this->auth->logout();
             }
         }
 

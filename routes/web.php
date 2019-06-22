@@ -2,7 +2,9 @@
 
 use Psr\Http\Message\ServerRequestInterface;
 
-$route->get('/dashboard', 'App\Controllers\DashboardController::index')->setName('dashboard');
+$route->group('', function ($route) {
+    $route->get('/dashboard', 'App\Controllers\DashboardController::index')->setName('dashboard');
+})->middleware($container->get(\App\Middleware\AuthenticatedMiddleware::class));
 
 $route->get('/', 'App\Controllers\HomeController::index')->setName('homepage');
 $route->get('/auth/signin', 'App\Controllers\Auth\LoginController::index')->setName('auth.login');

@@ -1,15 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Security;
 
 use App\Session\SessionStoreInterface;
 
 class Csrf
 {
+    /**
+     * @var SessionStoreInterface
+     */
     protected $session;
 
+    /**
+     * @var bool
+     */
     protected $persistToken = true;
 
+    /**
+     * @var TokenGenerator
+     */
     protected $tokenGenerator;
 
     public function __construct(SessionStoreInterface $session, TokenGenerator $tokenGenerator)
@@ -18,12 +29,22 @@ class Csrf
         $this->tokenGenerator = $tokenGenerator;
     }
 
-    public function key()
+    /**
+     * Token name
+     *
+     * @return string
+     */
+    public function key(): string
     {
         return '_token';
     }
 
-    public function token()
+    /**
+     * Set the session with token and return token string.
+     *
+     * @return string
+     */
+    public function token(): string
     {
         if (!$this->tokenNeedsToBeGenerated()) {
             return $this->getTokenFromSession();
@@ -37,12 +58,23 @@ class Csrf
         return $token;
     }
 
-    public function tokenIsValid($token)
+    /**
+     * Check if token string is equal with token from session.
+     *
+     * @param  string  $token
+     * @return bool
+     */
+    public function tokenIsValid(string $token): bool
     {
         return $token == $this->session->get($this->key());
     }
 
-    protected function tokenNeedsToBeGenerated()
+    /**
+     * Determinate if token needs to be generated.
+     *
+     * @return bool
+     */
+    protected function tokenNeedsToBeGenerated(): bool
     {
         if (!$this->session->exists($this->key())) {
             return true;
@@ -55,12 +87,22 @@ class Csrf
         return $this->session->exists($this->key());
     }
 
-    protected function shouldPersistToken()
+    /**
+     * Return value should the token needs to persist
+     *
+     * @return bool
+     */
+    protected function shouldPersistToken(): bool
     {
         return $this->persistToken;
     }
 
-    protected function getTokenFromSession()
+    /**
+     * Get token value from session.
+     *
+     * @return string
+     */
+    protected function getTokenFromSession(): string
     {
         return $this->session->get($this->key());
     }

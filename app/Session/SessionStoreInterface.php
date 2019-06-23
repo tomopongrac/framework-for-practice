@@ -4,9 +4,17 @@ namespace App\Session;
 
 interface SessionStoreInterface
 {
-    public function get($key, $default = null);
+    /**
+     * Return session value for given key.
+     * If key does not exist return default value if provided.
+     *
+     * @param  string  $key
+     * @param  string|null  $default
+     * @return string|null
+     */
+    public function get(string $key, $default = null);
 
-    public function set($key, $value = null);
+    public function set(string $key, $value = null);
 
     public function exists($key);
 

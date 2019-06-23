@@ -32,6 +32,7 @@ class ConfigServiceProvider extends AbstractServiceProvider
             ]);
 
             $config = (new Config())->load([$loader]);
+
             return $config;
         });
     }

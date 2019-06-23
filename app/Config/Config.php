@@ -8,7 +8,13 @@ class Config
 {
     protected $config = [];
 
-    public function load(array $loaders)
+    /**
+     * Load config files to the object
+     *
+     * @param  array  $loaders
+     * @return Config
+     */
+    public function load(array $loaders): Config
     {
         foreach ($loaders as $loader) {
             if (!$loader instanceof LoaderInterface) {
@@ -20,17 +26,36 @@ class Config
         return $this;
     }
 
-    public function getConfig()
+    /**
+     * Get array with config values
+     *
+     * @return array
+     */
+    public function getConfig(): array
     {
         return $this->config;
     }
 
-    public function get($key, $default = null)
+    /**
+     * Get value for key.
+     * If key does not exist return default value if provided.
+     *
+     * @param  string  $key
+     * @param  string|null  $default
+     * @return string|null
+     */
+    public function get(string $key, ?string $default = null)
     {
         return $this->extractFromConfig($key) ?? $default;
     }
 
-    protected function extractFromConfig($key)
+    /**
+     * Extract value from config array for given key
+     *
+     * @param  string  $key
+     * @return string|null
+     */
+    protected function extractFromConfig(string $key)
     {
         $filtered = $this->config;
 
@@ -40,7 +65,7 @@ class Config
                 continue;
             }
 
-            return;
+            return null;
         }
 
         return $filtered;

@@ -19,7 +19,16 @@ class ExistsRule
         $this->entity = $entity;
     }
 
-    public function validate($field, $value, $params, $fields)
+    /**
+     * Validation rule to check if in given table exist row with field name for given value.
+     *
+     * @param  string  $field
+     * @param  string  $value
+     * @param  array  $params
+     * @param  array  $fields
+     * @return bool
+     */
+    public function validate(string $field, string $value, array $params, array $fields): bool
     {
         $result = $this->entity->getRepository($params[0])
             ->findOneBy([

@@ -19,8 +19,8 @@
 
 <body>
     {% include 'layouts/partials/_navigation.twig' %}
-    {% include 'layouts/partials/_flash.twig' %}
     <div class="container">
+        {% include 'layouts/partials/_flash.twig' %}
         {% block content %}{% endblock %}
     </div>
 </body>

@@ -34,6 +34,8 @@ In your container create database
 php vendor/bin/doctrine orm:schema-tool:create
 ```
 
+Url for the app is http://localhost:8888/
+
 ## Features
 User can register and login with remember me.
 Forms have csrf protection.
